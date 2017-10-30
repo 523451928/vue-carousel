@@ -1,5 +1,5 @@
 # vue-carousel
-vue 一个可以在pc端做跑马灯和移动端做swiper的Vue组件
+一个可以在pc端做跑马灯和移动端做swiper的Vue组件
 
 ## 查看demo
 ```
