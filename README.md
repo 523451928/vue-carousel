@@ -23,7 +23,7 @@ Vue.component('Carousel',Carousel)
 # 使用方法
 
 ```HTML
-   <carousel :imgArr="imgArr" clientType="mobile" duration="3000" ></carousel>
+<carousel :imgArr="imgArr" clientType="mobile" duration="3000" ></carousel>
 ```
 
 ```JavaScript
