@@ -7,7 +7,7 @@
     </ul>
     <div class="dot-wrapper">
       <ol>
-        <li v-for="(item,index) in imgArr" @click.stop="changeIndex(index)" @mouseenter="changeIndex(index)">
+        <li v-for="(item,index) in imgArr" @click.stop="changeIndex(index)" @mouseenter="changeIndex(index)" @mouseleave="autoPlay">
           <button
             :class="index===Math.round(activeIndex)-1?
                     'active':index===0&&Math.round(activeIndex)===carouselArr.length-1?
@@ -141,6 +141,7 @@
         if(this.clientType!=='pc'){
           return
         }
+        clearInterval(this.interval)
         if (!this.transitonStyle) {
           this.transitonStyle = 'all .5s'
         }
@@ -152,11 +153,11 @@
         }
       },
       bindEvents() {
-        if(this.clientType==='pc'){
+        if(this.clientType==='pc' && this.isDrag){
           this.$refs.carouselWrapper.addEventListener ('mousedown', this.startFn)
           this.$refs.carouselWrapper.addEventListener ('mousemove', this.moveFn)
           this.$refs.carouselWrapper.addEventListener ('mouseup', this.endFn)
-        }else{
+        }else if(this.clientType==='mobile'){
           this.$refs.carouselWrapper.addEventListener ('touchstart', this.startFn)
           this.$refs.carouselWrapper.addEventListener ('touchmove', this.moveFn)
           this.$refs.carouselWrapper.addEventListener ('touchend', this.endFn)
@@ -212,7 +213,9 @@
             this.activeIndex = 1
           }, 350)
         }
-        this.autoPlay ()
+        if (this.isAuto) {
+          this.autoPlay ()
+        }
       },
       prevCarousel(flag) {
         this.activeIndex++
@@ -247,16 +250,14 @@
         }, this.duration)
       },
       refresh() {
-        if (this.isDrag) {
-          this.bindEvents ()
-        }
+        this.bindEvents ()
         this.wrapperWidth = this.$refs.carouselWrapper.clientWidth
         this.$refs.carouselContent.style.width = this.$refs.carouselWrapper.clientWidth * this.carouselArr.length + 'px'
       }
     },
     mounted() {
       if (this.isAuto) {
-        this.autoPlay ()
+        this.autoPlay()
       }
       this.refresh ()
       window.addEventListener ('resize', this.refresh)
