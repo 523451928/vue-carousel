@@ -20,7 +20,7 @@ import Carousel from './components/Carousel.vue'
 Vue.component('Carousel',Carousel)
 ```
 
-# 使用方法
+# usage
 
 ```HTML
 <carousel :imgArr="imgArr" clientType="mobile" duration="3000" ></carousel>
