@@ -1,7 +1,8 @@
 <template>
   <div id="app">
-    <carousel :imgArr="imgArr"></carousel>
-    <v-carousel :bannerData="bannerData"></v-carousel>
+    <carousel :imgArr="imgArr" clientType="mobile">
+    </carousel>
+    <!--<v-carousel :bannerData="bannerData"></v-carousel>-->
   </div>
 </template>
 
@@ -16,6 +17,7 @@
           '../static/bnr-1.jpg',
           '../static/bnr-3.jpg',
           '../static/bnr-4.jpg',
+          '../static/bnr-5.jpg',
           '../static/bnr-2.jpg'
         ],
         bannerData: ['../static/bnr-2.jpg','../static/bnr-4.jpg','../static/bnr-1.jpg'],
