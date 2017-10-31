@@ -29,51 +29,29 @@
 </template>
 
 <script>
- const on = (function() {
-    if (document.addEventListener) {
-      return function(element, event, handler) {
-        if (element && event && handler) {
-          element.addEventListener(event, handler, false);
-        }
-      };
-    } else {
-      return function(element, event, handler) {
-        if (element && event && handler) {
-          element.attachEvent('on' + event, handler);
-        }
-      };
+   function GetSlideAngle(dx, dy) {
+    return Math.atan2(dy, dx) * 180 / Math.PI
+  }
+  function GetSlideDirection(startX, startY, endX, endY) {
+    var dy = startY - endY
+    var dx = endX - startX
+    var result = 0
+
+    if (Math.abs(dx) < 2 && Math.abs(dy) < 2) {
     }
-  })();
-
-  /* istanbul ignore next */
-  const off = (function() {
-    if ( document.removeEventListener) {
-      return function(element, event, handler) {
-        if (element && event) {
-          element.removeEventListener(event, handler, false);
-        }
-      };
-    } else {
-      return function(element, event, handler) {
-        if (element && event) {
-          element.detachEvent('on' + event, handler);
-        }
-      };
+    // 1上   2下   3左   4右
+    var angle = GetSlideAngle(dx, dy)
+    if (angle >= -45 && angle < 45) {
+      result = 4
+    } else if (angle >= 45 && angle < 135) {
+      result = 1
+    } else if (angle >= -135 && angle < -45) {
+      result = 2
+    } else if ((angle >= 135 && angle <= 180) || (angle >= -180 && angle < -135)) {
+      result = 3
     }
-  })();
-
-  /* istanbul ignore next */
-  const once = function(el, event, fn) {
-    var listener = function() {
-      if (fn) {
-        fn.apply(this, arguments);
-      }
-      off(el, event, listener);
-    };
-    on(el, event, listener);
-  };
-
-//  once(document.querySelector('body'),'click',function(){alert(1)})
+    return result
+  }
   export default{
     data() {
       return {
@@ -168,11 +146,10 @@
           this.eventObj.startX = e.clientX
         }else{
           this.eventObj.startX = e.touches[0].clientX
+          this.eventObj.startY = e.touched[0].clientY
         }
         this.eventObj.isLock = true
         this.eventObj.startIndex = this.activeIndex
-        e.stopPropagation ()
-        e.preventDefault ()
         if (this.interval) {
           clearInterval (this.interval)
         }
@@ -184,6 +161,14 @@
             diffX = e.clientX - this.eventObj.startX
           }else{
             diffX = e.touches[0].clientX - this.eventObj.startX
+            let direction = GetSlideDirection(this.eventObj.startX, this.eventObj.startY, e.touches[0].clientX, e.touches[0].clientY)
+            console.log(direction)
+            if (direction === 1 || direction === 2) {
+              return
+            } else {
+              e.stopPropagation()
+              e.preventDefault()
+            }
           }
           this.eventObj.diffX = diffX
           this.transitonStyle = ''
