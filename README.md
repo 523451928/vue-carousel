@@ -56,3 +56,4 @@ Carousel props:
 | isAuto | Boolean(defualt: true) 是否自动轮播 |
 | isDrag | Boolean(default: true) 在pc端是否为可以拖拽 |
 | distance | Number(default: 100) 拖拽或者touchend之后的距离触发跳至上一张或者下一张 |
+| playDirection | String(default: 'left') 轮播方向 left向左轮播 right 向右轮播|
