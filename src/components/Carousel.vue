@@ -5,7 +5,7 @@
         <img :src="item">
       </li>
     </ul>
-    <div class="dot-wrapper">
+    <div class="dot-wrapper" v-if="hasDot&&imgArr.length>1">
       <ol>
         <li v-for="(item,index) in imgArr" @click.stop="changeIndex(index)" @mouseenter="changeIndex(index)" @mouseleave="autoPlay">
           <button
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-   function GetSlideAngle(dx, dy) {
+  function GetSlideAngle(dx, dy) {
     return Math.atan2(dy, dx) * 180 / Math.PI
   }
   function GetSlideDirection(startX, startY, endX, endY) {
@@ -97,6 +97,10 @@
       distance: {
         type: Number,
         default: 100
+      },
+      playDirection: {
+        type: String,
+        default: 'left'
       }
     },
     computed: {
@@ -108,9 +112,11 @@
       },
       carouselArr() {
         let data = Object.assign ([], this.imgArr)
-        let length = this.imgArr.length - 1
-        data.push (this.imgArr[0])
-        data.unshift (this.imgArr[length])
+        if( this.imgArr.length > 1){
+          let length = this.imgArr.length - 1
+          data.push (this.imgArr[0])
+          data.unshift (this.imgArr[length])
+        }
         return data
       }
     },
@@ -135,7 +141,7 @@
           this.$refs.carouselWrapper.addEventListener ('mousedown', this.startFn)
           this.$refs.carouselWrapper.addEventListener ('mousemove', this.moveFn)
           this.$refs.carouselWrapper.addEventListener ('mouseup', this.endFn)
-        }else if(this.clientType==='mobile'){
+        }else if(this.clientType==='mobile' && this.imgArr.length > 1){
           this.$refs.carouselWrapper.addEventListener ('touchstart', this.startFn)
           this.$refs.carouselWrapper.addEventListener ('touchmove', this.moveFn)
           this.$refs.carouselWrapper.addEventListener ('touchend', this.endFn)
@@ -146,7 +152,7 @@
           this.eventObj.startX = e.clientX
         }else{
           this.eventObj.startX = e.touches[0].clientX
-          this.eventObj.startY = e.touched[0].clientY
+          this.eventObj.startY = e.touches[0].clientY
         }
         this.eventObj.isLock = true
         this.eventObj.startIndex = this.activeIndex
@@ -198,7 +204,7 @@
             this.activeIndex = 1
           }, 350)
         }
-        if (this.isAuto) {
+        if (this.isAuto && this.imgArr.length > 1) {
           this.autoPlay ()
         }
       },
@@ -215,10 +221,12 @@
           },350)
         }
       },
-      nextCarousel() {
+      nextCarousel(flag) {
         this.activeIndex--
         this.transitonStyle = 'all .5s'
-        clearInterval (this.interval)
+        if(flag !== true) {
+          clearInterval(this.interval)
+        }
         if (this.activeIndex === 0) {
           setTimeout (() => {
             this.transitonStyle = ''
@@ -231,7 +239,11 @@
           clearInterval (this.interval)
         }
         this.interval = setInterval (() => {
-          this.prevCarousel (true)
+          if (this.playDirection === 'left') {
+            this.prevCarousel (true)
+          } else {
+            this.nextCarousel(true)
+          }
         }, this.duration)
       },
       refresh() {
@@ -241,8 +253,11 @@
       }
     },
     mounted() {
-      if (this.isAuto) {
+      if (this.isAuto && this.imgArr.length >1 ) {
         this.autoPlay()
+      }
+      if(this.imgArr.length === 1){
+        this.activeIndex = 0
       }
       this.refresh ()
       window.addEventListener ('resize', this.refresh)
