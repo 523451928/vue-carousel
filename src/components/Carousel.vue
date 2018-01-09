@@ -98,6 +98,10 @@
         type: Number,
         default: 100
       },
+      dragDisable: {
+        type: Boolean,
+        default: false
+      },
       playDirection: {
         type: String,
         default: 'left'
@@ -162,6 +166,9 @@
       },
       moveFn(e) {
         let diffX = 0
+        if (this.dragDisable) {
+          return
+        }
         if (this.eventObj.isLock) {
           if(this.clientType==='pc'){
             diffX = e.clientX - this.eventObj.startX
@@ -182,6 +189,15 @@
         }
       },
       endFn(e) {
+        if (this.dragDisable) {
+          let direction = GetSlideDirection(this.eventObj.startX, this.eventObj.startY, e.changedTouches[0].clientX, e.changedTouches[0].clientY)
+          if (direction===3) {
+            this.activeIndex++
+          }
+          if (direction===4) {
+            this.activeIndex--
+          }
+        }
         this.eventObj.isLock = false
         this.transitonStyle = 'all .5s'
         if(this.eventObj.diffX <= -this.distance){
